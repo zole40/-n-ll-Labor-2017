@@ -1,0 +1,160 @@
+package onlab.hand.query
+import "onlab.metamodel.hand";
+
+pattern openedThumb(h : Hand ,f: FingerWith2Bones){
+	Hand.thumb(h,f);
+	FingerWith2Bones.distal(f,b1);
+	FingerWith2Bones.proximal(f,b2);
+	neg find directionT(b1,b2);
+}
+
+pattern horizontalLeftHand(h : Hand){
+	Hand.type(h,HandType::LEFT);
+	find horizontalHand(h);
+}
+
+pattern horizontalRightHand(h: Hand){
+	Hand.type(h,HandType::RIGHT);
+	find horizontalHand(h);
+}
+
+pattern horizontalHand(h : Hand){
+	Hand.palm.angle(h,a);
+	check( a < -0.98f);
+}
+
+pattern openedIndex(h : Hand, f : FingerWith3Bones){
+	Hand.index(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	neg find direction(b1,b2);
+}
+
+pattern openedMiddle(h : Hand, f : FingerWith3Bones){
+	Hand.middle(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	neg find direction(b1,b2);
+}
+
+pattern openedRing(h : Hand, f : FingerWith3Bones){
+	Hand.ring(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	neg find direction(b1,b2);
+}
+
+pattern openedPinky(h : Hand, f : FingerWith3Bones){
+	Hand.pinky(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	neg find direction(b1,b2);
+}
+
+
+
+pattern closedThumb(h : Hand ,f: FingerWith2Bones){
+	Hand.thumb(h,f);
+	FingerWith2Bones.distal(f,b1);
+	FingerWith2Bones.proximal(f,b2);
+	find directionT(b1,b2);
+}
+
+pattern closedIndex(h : Hand, f : FingerWith3Bones){
+	Hand.index(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	find direction(b1,b2);
+}
+
+pattern closedMiddle(h : Hand, f : FingerWith3Bones){
+	Hand.middle(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	find direction(b1,b2);
+}
+
+pattern closedRing(h : Hand, f : FingerWith3Bones){
+	Hand.ring(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	find direction(b1,b2);
+}
+
+pattern closedPinky(h : Hand, f : FingerWith3Bones){
+	Hand.pinky(h,f);
+	FingerWith3Bones.distal(f,b1);
+	FingerWith3Bones.proximal(f,b2);
+	find direction(b1,b2);
+}
+
+
+pattern closedHand(h : HandType){
+	Hand.type(hand,h);
+	find closedThumb(hand,_);
+	find closedIndex(hand,_);
+	find closedMiddle(hand,_);
+	find closedRing(hand,_);
+	find closedPinky(hand,_);
+}
+pattern OLeftHand(){
+	find openedHand(HandType::LEFT);
+}
+
+pattern CLeftHand(){
+	find closedHand(HandType::LEFT);
+}
+
+pattern ORightHand(){
+	find openedHand(HandType::RIGHT);
+}
+
+pattern CRightHand(){
+	find closedHand(HandType::RIGHT);
+}
+
+pattern openedHand(h : HandType){
+	Hand.type(hand,h);
+	find openedThumb(hand,_);
+	find openedIndex(hand,_);
+	find openedMiddle(hand,_);
+	find openedRing(hand,_);
+	find openedPinky(hand,_);
+}
+
+pattern directionT(b1: Bone, b2 : Bone){
+	Bone.direction(b1,v1);
+	Bone.direction(b2,v2);
+	find angleT(v1,v2);
+}
+
+pattern direction(b1: Bone, b2 : Bone){
+	Bone.direction(b1,v1);
+	Bone.direction(b2,v2);
+	find angle(v1,v2);
+}
+
+pattern angleT(v1: Vector, v2 : Vector){
+	Vector.x(v1,x1);
+	Vector.y(v1,y1);
+	Vector.z(v1,z1);
+	
+	Vector.x(v2,x2);
+	Vector.y(v2,y2);
+	Vector.z(v2,z2);
+	check(x1*x2+y1*y2+z1*z2 < 0.6);
+}
+
+pattern angle(v1: Vector, v2 : Vector){
+	Vector.x(v1,x1);
+	Vector.y(v1,y1);
+	Vector.z(v1,z1);
+	
+	Vector.x(v2,x2);
+	Vector.y(v2,y2);
+	Vector.z(v2,z2);
+	check(x1*x2+y1*y2+z1*z2 < 0.0);
+}
+
+
+

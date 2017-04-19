@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="hand" nsURI="onlab.metamodel.hand" nsPrefix="">
+  <eClassifiers xsi:type="ecore:EClass" name="Palm">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="angle" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Float"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="position" lowerBound="1"
+        eType="#//Vector" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Finger" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//FingerType"
+        defaultValueLiteral="THUMB"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Vector">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
+        defaultValueLiteral="0.0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="z" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Hand">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="palm" lowerBound="1" eType="#//Palm"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//HandType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thumb" eType="#//FingerWith2Bones"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="pinky" eType="#//FingerWith3Bones"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="index" eType="#//FingerWith3Bones"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="middle" eType="#//FingerWith3Bones"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ring" eType="#//FingerWith3Bones"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="HandType">
+    <eLiterals name="LEFT"/>
+    <eLiterals name="RIGHT" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FingerWith2Bones" eSuperTypes="#//Finger">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="proximal" eType="#//Bone"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="distal" eType="#//Bone"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FingerWith3Bones" eSuperTypes="#//FingerWith2Bones">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="intermediate" eType="#//Bone"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Bone">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="position" lowerBound="1"
+        eType="#//Vector" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="direction" lowerBound="1"
+        eType="#//Vector" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="FingerType">
+    <eLiterals name="THUMB"/>
+    <eLiterals name="INDEX" value="1" literal="INDEX"/>
+    <eLiterals name="MIDDLE" value="2"/>
+    <eLiterals name="RING" value="3"/>
+    <eLiterals name="PINKY" value="4"/>
+  </eClassifiers>
+</ecore:EPackage>

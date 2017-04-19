@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="onlab.hand.query.Query" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:onlab.hand.query.Query" id="onlab.hand.query.Query">
+      <query-specification fqn="onlab.hand.query.openedThumb"/>
+      <query-specification fqn="onlab.hand.query.horizontalLeftHand"/>
+      <query-specification fqn="onlab.hand.query.horizontalRightHand"/>
+      <query-specification fqn="onlab.hand.query.horizontalHand"/>
+      <query-specification fqn="onlab.hand.query.openedIndex"/>
+      <query-specification fqn="onlab.hand.query.openedMiddle"/>
+      <query-specification fqn="onlab.hand.query.openedRing"/>
+      <query-specification fqn="onlab.hand.query.openedPinky"/>
+      <query-specification fqn="onlab.hand.query.closedThumb"/>
+      <query-specification fqn="onlab.hand.query.closedIndex"/>
+      <query-specification fqn="onlab.hand.query.closedMiddle"/>
+      <query-specification fqn="onlab.hand.query.closedRing"/>
+      <query-specification fqn="onlab.hand.query.closedPinky"/>
+      <query-specification fqn="onlab.hand.query.closedHand"/>
+      <query-specification fqn="onlab.hand.query.OLeftHand"/>
+      <query-specification fqn="onlab.hand.query.CLeftHand"/>
+      <query-specification fqn="onlab.hand.query.ORightHand"/>
+      <query-specification fqn="onlab.hand.query.CRightHand"/>
+      <query-specification fqn="onlab.hand.query.openedHand"/>
+      <query-specification fqn="onlab.hand.query.directionT"/>
+      <query-specification fqn="onlab.hand.query.direction"/>
+      <query-specification fqn="onlab.hand.query.angleT"/>
+      <query-specification fqn="onlab.hand.query.angle"/>
+    </group>
+  </extension>&gt;
+</plugin>

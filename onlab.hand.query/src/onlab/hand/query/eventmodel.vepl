@@ -1,0 +1,42 @@
+package onlab.hand.query
+import onlab.metamodel.hand.*
+import-queries onlab.hand.query.*
+
+
+queryEvent LefthandOpens()
+	as OLeftHand()
+	
+queryEvent LefthandClose()
+	as CLeftHand(hand) 
+
+queryEvent RighthandOpens()
+	as ORightHand()
+	
+queryEvent RighthandClose()
+	as CRightHand(hand) 
+
+
+
+complexEvent LeftHandCloses(){
+	as (LefthandOpens() -> LefthandClose()){1}
+}
+
+complexEvent RigthHandCloses(){
+	as (RighthandOpens() -> RighthandOpens()){1}
+}
+
+rule leftClose on LeftHandCloses{
+	System.out.println("left hand closed")
+}
+
+rule rightClose on RigthHandCloses{
+	System.out.println("right hand closed")
+}
+
+complexEvent twoHandCloses(){
+	as (LeftHandCloses() -> RigthHandCloses())
+}
+
+rule twoClose on twoHandCloses{
+	System.out.println("2 hand closed")
+}
