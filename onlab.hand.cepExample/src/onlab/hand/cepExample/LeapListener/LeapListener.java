@@ -1,4 +1,4 @@
-package onlab.leapMotion.Listener;
+package onlab.hand.cepExample.LeapListener;
 
 import java.util.ArrayList;
 
@@ -10,14 +10,14 @@ import com.leapmotion.leap.Controller;
 import com.leapmotion.leap.Frame;
 import com.leapmotion.leap.Listener;
 
-import onlab.leapMotion.model.HandModel;
+import onlab.hand.cepExample.model.HandModel;
 import onlab.metamodel.hand.*;
 
 
 public class LeapListener extends Listener{
 	HandModel model;
 	ArrayList<Hand> hands;
-	 ResourceSet reSet;
+	ResourceSet reSet;
 	public LeapListener(ResourceSet reSet){
 		super();
 		this.reSet = reSet;
@@ -30,7 +30,6 @@ public class LeapListener extends Listener{
     }
 
     public void onFrame(Controller controller) {
-    	//System.out.println(System.currentTimeMillis());
 	    Frame frame = controller.frame();
 	    if(hands.size() < frame.hands().count()){
 	    	this.createHands(frame);
@@ -39,11 +38,12 @@ public class LeapListener extends Listener{
 	    	this.deleteHands(frame);
 	    }
 	    this.updateHands(frame);
-	    System.out.println("frame");
     }
 	private void createHands(Frame frame){
+		
 		while(hands.size() < frame.hands().count()){
-			Hand hand = model.createHand();	    
+			System.out.println("added " + frame.hands().get(frame.hands().count()-1).id());
+			Hand hand = model.createHand(frame.hands().get(frame.hands().count()-1).id());	   	
 	    	Resource res =   reSet.createResource((URI.createURI("D:/BME/Programozás/runtime-EclipseApplication/onlab.hand.leapModel/bin/onlab/hand/egy.hand")));
 	    	res.getContents().add(hand);  
 	    	hands.add(hand);
@@ -51,11 +51,25 @@ public class LeapListener extends Listener{
 	}
 	private void deleteHands(Frame frame){
 		while(hands.size()> frame.hands().count()){
-			reSet.getResources().remove(hands.size() - 1);
-			hands.remove(hands.get(hands.size()-1));
+			int index = 0;
+			for(Hand h : hands){
+				boolean ok = false;
+				for(int i = 0; i<frame.hands().count();i++){
+					if(h.getID() == frame.hands().get(i).id()){
+						ok = true;
+						index = i;
+						break;
+					}
+				}
+				if(!ok){
+					reSet.getResources().remove(h);
+					hands.remove(h);
+					System.out.println("delete "+ h.getID());
+				}
+			}
 		}
 	}
-	public void updateHands(Frame frame){
+	public synchronized void updateHands(Frame frame){
 		int i = 0;
 		for(Hand hand : hands){
 			if(frame.hands().get(i).isLeft()){
@@ -110,7 +124,6 @@ public class LeapListener extends Listener{
 				finger.getIntermediate().getDirection().setX(lFinger.bone(Bone.Type.TYPE_INTERMEDIATE).direction().getX());
 				finger.getIntermediate().getDirection().setY(lFinger.bone(Bone.Type.TYPE_INTERMEDIATE).direction().getY());
 				finger.getIntermediate().getDirection().setZ(lFinger.bone(Bone.Type.TYPE_INTERMEDIATE).direction().getZ());
-				
 			}
 		
 		}

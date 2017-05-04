@@ -1,31 +1,34 @@
-package activator_test;
+package onlab.hand.cepExample.bundle;
 
 import java.io.IOException;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.viatra.cep.core.api.engine.CEPEngine;
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-
 import com.leapmotion.leap.Controller;
 
-import onlab.leapMotion.Listener.LeapListener;
+import onlab.hand.cepExample.LeapListener.LeapListener;
+import onlab.hand.query.CepFactory;
+import onlab.hand.query.mapping.QueryEngine2ViatraCep;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator implements BundleActivator {
+public class Main implements BundleActivator {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "activator_test"; //$NON-NLS-1$
 
 	// The shared instance
-	private static Activator plugin;
-	
+	private static Main plugin;
+	private CEPEngine engine;
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public Main() {
 	}
 
 	/*
@@ -37,6 +40,8 @@ public class Activator implements BundleActivator {
 		LeapListener listener = new LeapListener(resources);
         Controller controller = new Controller();	
         controller.addListener(listener);
+		engine = CEPEngine.newEngine().eventContext(EventContext.IMMEDIATE).rules(CepFactory.getInstance().allRules()).prepare();
+		QueryEngine2ViatraCep.register(resources, engine.getStreamManager().newEventStream());
 		plugin = this;
         // Keep this process running until Enter is pressed
         System.out.println("Press Enter to quit...");
@@ -64,7 +69,7 @@ public class Activator implements BundleActivator {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static Main getDefault() {
 		return plugin;
 	}
 

@@ -91,7 +91,7 @@ pattern closedPinky(h : Hand, f : FingerWith3Bones){
 
 pattern closedHand(h : HandType){
 	Hand.type(hand,h);
-	find closedThumb(hand,_);
+//	find closedThumb(hand,_);
 	find closedIndex(hand,_);
 	find closedMiddle(hand,_);
 	find closedRing(hand,_);
@@ -142,7 +142,7 @@ pattern angleT(v1: Vector, v2 : Vector){
 	Vector.x(v2,x2);
 	Vector.y(v2,y2);
 	Vector.z(v2,z2);
-	check(x1*x2+y1*y2+z1*z2 < 0.6);
+	check(x1*x2+y1*y2+z1*z2 < 0.9);
 }
 
 pattern angle(v1: Vector, v2 : Vector){

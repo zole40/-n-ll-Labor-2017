@@ -1,4 +1,4 @@
-package onlab.leapMotion.model;
+package onlab.hand.cepExample.model;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -8,9 +8,10 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import onlab.metamodel.hand.*;
 public class HandModel {
-	public Hand createHand(){
+	public Hand createHand(int id){
 		handFactory factory = handFactory.eINSTANCE;
 		Hand hand =  factory.createHand();
+		hand.setID(id); 
 		
 		Palm palm = factory.createPalm();
 		addPosition(palm,factory);

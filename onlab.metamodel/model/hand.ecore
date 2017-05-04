@@ -30,6 +30,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ring" eType="#//FingerWith3Bones"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ID" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"
+        iD="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="HandType">
     <eLiterals name="LEFT"/>

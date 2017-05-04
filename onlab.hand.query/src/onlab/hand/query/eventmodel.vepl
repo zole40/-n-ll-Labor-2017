@@ -4,39 +4,39 @@ import-queries onlab.hand.query.*
 
 
 queryEvent LefthandOpens()
-	as OLeftHand()
+	as OLeftHand() found
 	
 queryEvent LefthandClose()
-	as CLeftHand(hand) 
+	as CLeftHand(hand) found
 
 queryEvent RighthandOpens()
-	as ORightHand()
+	as ORightHand() found
 	
 queryEvent RighthandClose()
-	as CRightHand(hand) 
+	as CRightHand(hand) found
 
 
 
 complexEvent LeftHandCloses(){
-	as (LefthandOpens() -> LefthandClose()){1}
+	as (LefthandOpens -> LefthandClose){1}
 }
 
 complexEvent RigthHandCloses(){
-	as (RighthandOpens() -> RighthandOpens()){1}
-}
-
-rule leftClose on LeftHandCloses{
-	System.out.println("left hand closed")
-}
-
-rule rightClose on RigthHandCloses{
-	System.out.println("right hand closed")
+	as (RighthandOpens -> RighthandClose){1}
 }
 
 complexEvent twoHandCloses(){
-	as (LeftHandCloses() -> RigthHandCloses())
+	as (LeftHandCloses -> RigthHandCloses){1}
 }
 
 rule twoClose on twoHandCloses{
 	System.out.println("2 hand closed")
+}
+
+rule left on LeftHandCloses{
+	System.out.println("left hand closed")
+}
+
+rule rigth on RigthHandCloses{
+	System.out.println("right hand closed")
 }
