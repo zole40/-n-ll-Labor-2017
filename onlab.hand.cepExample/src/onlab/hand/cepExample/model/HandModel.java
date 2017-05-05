@@ -8,9 +8,11 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import onlab.metamodel.hand.*;
 public class HandModel {
-	public Hand createHand(int id){
+	public Hand createHand(int id,boolean left){
 		handFactory factory = handFactory.eINSTANCE;
 		Hand hand =  factory.createHand();
+		HandType type = left ? HandType.LEFT : HandType.RIGHT;
+		hand.setType(type);
 		hand.setID(id); 
 		
 		Palm palm = factory.createPalm();

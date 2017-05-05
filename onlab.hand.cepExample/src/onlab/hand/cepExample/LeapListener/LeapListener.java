@@ -1,6 +1,9 @@
 package onlab.hand.cepExample.LeapListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -16,14 +19,14 @@ import onlab.metamodel.hand.*;
 
 public class LeapListener extends Listener{
 	HandModel model;
-	ArrayList<Hand> hands;
+	HashMap<Integer,Hand> hands;
 	ResourceSet reSet;
 	public LeapListener(ResourceSet reSet){
 		super();
 		this.reSet = reSet;
         this.model = new HandModel();
         model.init();
-		hands = new ArrayList<Hand>();
+		hands = new HashMap<Integer,Hand>();
 	}
     public void onConnect(Controller controller) {
         System.out.println("Connected");
@@ -31,72 +34,70 @@ public class LeapListener extends Listener{
 
     public void onFrame(Controller controller) {
 	    Frame frame = controller.frame();
-	    if(hands.size() < frame.hands().count()){
-	    	this.createHands(frame);
+	    com.leapmotion.leap.Hand leapHand = null;
+	    Set<Integer> IDs = new HashSet<Integer>(hands.keySet());
+	    for(int i = 0; i< frame.hands().count();i++){
+	    	leapHand = frame.hands().get(i);
+	    	Integer ID = frame.hands().get(i).id();
+	    	if(hands.get(ID) == null){
+	    		try{
+	    		this.createHands(ID, leapHand);
+	    		this.updateHand(ID, leapHand);
+	    		}
+	    		catch(NullPointerException e){
+	    			System.out.println(e.getMessage());
+	    		}
+	    	}
+	    	else{
+	    		IDs.remove(ID);
+	    		this.updateHand(ID, leapHand);
+	    	}
 	    }
-	    else if(hands.size() > frame.hands().count()){
-	    	this.deleteHands(frame);
+	    if(IDs.size()!=0){
+	    	this.deleteHands(IDs);
 	    }
-	    this.updateHands(frame);
     }
-	private void createHands(Frame frame){
-		
-		while(hands.size() < frame.hands().count()){
-			System.out.println("added " + frame.hands().get(frame.hands().count()-1).id());
-			Hand hand = model.createHand(frame.hands().get(frame.hands().count()-1).id());	   	
-	    	Resource res =   reSet.createResource((URI.createURI("D:/BME/Programozás/runtime-EclipseApplication/onlab.hand.leapModel/bin/onlab/hand/egy.hand")));
-	    	res.getContents().add(hand);  
-	    	hands.add(hand);
+	private synchronized void createHands(Integer ID, com.leapmotion.leap.Hand leapHand){
+		if(leapHand != null && ID != null){
+			String left = leapHand.isLeft() ? "LEFT" : "RIGHT";
+			System.out.println("new " + left + " hand -  ID: " + ID);
+			Hand hand = model.createHand(ID,leapHand.isLeft());	   	
+		    Resource res =   reSet.createResource((URI.createURI("D:/BME/Programozás/runtime-EclipseApplication/onlab.hand.leapModel/bin/onlab/hand/egy.hand")));
+		    res.getContents().add(hand);  
+		    hands.put(ID,hand);
+		}
+		else{
+			throw new NullPointerException();
 		}
 	}
-	private void deleteHands(Frame frame){
-		while(hands.size()> frame.hands().count()){
-			int index = 0;
-			for(Hand h : hands){
-				boolean ok = false;
-				for(int i = 0; i<frame.hands().count();i++){
-					if(h.getID() == frame.hands().get(i).id()){
-						ok = true;
-						index = i;
-						break;
-					}
-				}
-				if(!ok){
-					reSet.getResources().remove(h);
-					hands.remove(h);
-					System.out.println("delete "+ h.getID());
-				}
-			}
-		}
-	}
-	public synchronized void updateHands(Frame frame){
-		int i = 0;
-		for(Hand hand : hands){
-			if(frame.hands().get(i).isLeft()){
-				hand.setType(HandType.LEFT);
-
-			}
-			else if(frame.hands().get(i).isRight()){
-				hand.setType(HandType.RIGHT);
-			}
-			//Palm
-			hand.getPalm().getPosition().setX(frame.hands().get(i).palmPosition().getX());
-			hand.getPalm().getPosition().setY(frame.hands().get(i).palmPosition().getY());
-			hand.getPalm().getPosition().setZ(frame.hands().get(i).palmPosition().getZ());
-			com.leapmotion.leap.Vector v = new com.leapmotion.leap.Vector(0,1,0);
-			hand.getPalm().setAngle(frame.hands().get(i).palmNormal().dot(v));
-
-			//thumb
-			this.updateFinger((FingerWith3Bones)hand.getThumb(), frame.hands().get(i).fingers().get(0));
-			this.updateFinger(hand.getIndex(), frame.hands().get(i).fingers().get(1));
-			this.updateFinger(hand.getMiddle(), frame.hands().get(i).fingers().get(2));
-			this.updateFinger(hand.getRing(), frame.hands().get(i).fingers().get(3));
-			this.updateFinger(hand.getPinky(), frame.hands().get(i).fingers().get(4));
-			i++;
-		}
 	
+	private synchronized void deleteHands(Set<Integer> IDs){
+		for(Integer ID : IDs){
+			Hand hand = hands.get(ID);
+			hands.remove(ID);
+			reSet.getResources().remove(hand);
+			System.out.println("hand deleted -  ID: " + ID);
+		}
 	}
-		public void updateFinger(FingerWith3Bones finger,com.leapmotion.leap.Finger lFinger){
+	
+	public synchronized void updateHand(int ID ,com.leapmotion.leap.Hand leapHand){
+		Hand hand = hands.get(ID);
+		//Palm
+		hand.getPalm().getPosition().setX(leapHand.palmPosition().getX());
+		hand.getPalm().getPosition().setY(leapHand.palmPosition().getY());
+		hand.getPalm().getPosition().setZ(leapHand.palmPosition().getZ());
+		com.leapmotion.leap.Vector v = new com.leapmotion.leap.Vector(0,1,0);
+		hand.getPalm().setAngle(leapHand.palmNormal().dot(v));
+
+		//fingers
+		this.updateFinger((FingerWith3Bones)hand.getThumb(), leapHand.fingers().get(0));
+		this.updateFinger(hand.getIndex(), leapHand.fingers().get(1));
+		this.updateFinger(hand.getMiddle(), leapHand.fingers().get(2));
+		this.updateFinger(hand.getRing(), leapHand.fingers().get(3));
+		this.updateFinger(hand.getPinky(),leapHand.fingers().get(4));
+	}
+	
+		public synchronized void updateFinger(FingerWith3Bones finger,com.leapmotion.leap.Finger lFinger){
 			
 			finger.getDistal().getPosition().setX(lFinger.bone(Bone.Type.TYPE_DISTAL).center().getX());
 			finger.getDistal().getPosition().setY(lFinger.bone(Bone.Type.TYPE_DISTAL).center().getY());
